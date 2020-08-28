@@ -216,7 +216,7 @@ def instructions(colour):
     """
     Render instruction on bottom of screen
     :param colour: colour of instructions
-    :return:
+    :return: None
     """
 
     m1 = number_font.render("Welcome to Sudoku!", True, colour)
@@ -234,7 +234,7 @@ def instructions(colour):
 def invalid_move_error(colour):
     """
     Render error message on screen if user inputs an invalid move
-    :param colour:
+    :param colour: colour of text
     :return: None
     """
     m1 = number_font.render("Invalid Move. Try Again", True, colour)
@@ -244,8 +244,8 @@ def invalid_move_error(colour):
 def invalid_board_error(colour):
     """
     Render error message on screen if board is unsolvable or becomes unsolvable after user inputs.
-    :param colour:
-    :return:
+    :param colour: colour of text
+    :return: None
     """
     m1 = number_font.render("Can't be solved.", True, colour)
     window.blit(m1, (10, 550))
@@ -301,8 +301,6 @@ def start():
                 solve = (e == pygame.K_SPACE)
                 delete = (e == pygame.K_d)
                 reset = (e == pygame.K_r)
-
-
 
         r = game.selected_row
         c = game.selected_col
