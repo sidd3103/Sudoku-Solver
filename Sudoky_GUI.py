@@ -302,6 +302,8 @@ def start():
                 delete = (e == pygame.K_d)
                 reset = (e == pygame.K_r)
 
+
+
         r = game.selected_row
         c = game.selected_col
 
@@ -313,6 +315,7 @@ def start():
                     game.cells[i][j].setVal(game.board[i][j])
             reset = False
             invalid_board = False
+            invalid_move = False
 
         if delete:
             if game.board_copy[r][c] == 0:
