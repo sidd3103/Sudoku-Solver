@@ -26,7 +26,6 @@ class Board(object):
         Constructor for our main class
         :param board: 2D list representing our sudoku board
         """
-
         # Original board
         self.board = board
         # Copy of our board that will remain unchanged
@@ -189,7 +188,7 @@ class Cell(object):
         """
         x = self.col * gap
         y = self.row * gap
-        self.draw_lines(black, x, y, 1)
+        self.draw_lines(black, x, y)
         if self.val != 0:
             box = pygame.Rect(x + 1.8, y + 1.8, gap - 1, gap - 1)
             pygame.draw.rect(window, colour, box)
@@ -319,6 +318,7 @@ def start():
             if game.board_copy[r][c] == 0:
                 game.update(r, c, 0)
             delete = False
+            invalid_board = False
 
         if val != -1:
             if game.checkIfValid(r, c, val) and game.board_copy[r][c] == 0:
@@ -332,6 +332,8 @@ def start():
             solve = False
             if not game.solve():
                 invalid_board = True
+            else:
+                invalid_board = False
 
         game.draw()
         if sel:
