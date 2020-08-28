@@ -7,7 +7,7 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 purple = (90, 24, 154)
 mauve = (224, 170, 255)
-red = (255, 0, 0)
+red = (154, 3, 30)
 
 # Constants
 WINDOW_WIDTH = 540
@@ -110,7 +110,7 @@ class Board(object):
         self.board[row][col] = num
         self.cells[row][col].setVal(num)
         self.draw()
-        self.cells[row][col].draw_lines(red, col * gap, row * gap, 3)
+        self.cells[row][col].draw_lines(red, col * gap, row * gap, 4)
         pygame.display.update()
         pygame.time.delay(50)
 
@@ -337,7 +337,7 @@ def start():
 
         game.draw()
         if sel:
-            game.cells[r][c].draw_lines(red, c * gap, r * gap, 3)
+            game.cells[r][c].draw_lines(red, c * gap, r * gap, 4)
         if invalid_move or invalid_board:
             if invalid_move:
                 invalid_move_error(black)
