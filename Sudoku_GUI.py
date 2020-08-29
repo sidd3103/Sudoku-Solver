@@ -1,4 +1,5 @@
 import pygame
+import Sudoku_noGUI
 
 pygame.init()
 
@@ -28,6 +29,10 @@ class Board(object):
         """
         # Original board
         self.board = board
+        # Solution
+        self.solution = [[board[i][j] for j in range(9)] for i in range(9)]
+        Sudoku_noGUI.solve(self.solution)
+
         # Copy of our board that will remain unchanged
         self.board_copy = [[self.board[i][j] for j in range(9)] for i in range(9)]
         # 9x9 list of cells.
@@ -114,7 +119,7 @@ class Board(object):
         self.draw()
         Cell.draw_lines(red, col * gap, row * gap, 4)
         pygame.display.update()
-        pygame.time.delay(50)
+        pygame.time.delay(70)
 
     def solve(self):
         """
@@ -214,7 +219,7 @@ class Cell(object):
         self.val = num
 
 
-def instructions(colour):
+def instructions(colour, count):
     """
     Render instruction on bottom of screen
     :param colour: colour of instructions
@@ -229,8 +234,16 @@ def instructions(colour):
     window.blit(m3, (10, 610))
     m4 = text_font.render("Press SpaceBar to solve.", True, colour)
     window.blit(m4, (10, 630))
+
+    if count > 0:
+        s = "Press H for hint. {} hints remaining".format(count)
+    else:
+        s = "No hints remaining. You are on your own soldier."
+
+    m6 = text_font.render(s, True, colour)
+    window.blit(m6, (10, 650))
     m5 = text_font.render("Created By : Siddharth Mittal", True, colour)
-    window.blit(m5, (10, 670))
+    window.blit(m5, (10, 680))
 
 
 def invalid_move_error(colour):
@@ -242,6 +255,12 @@ def invalid_move_error(colour):
     m1 = number_font.render("Invalid Move. Try Again", True, colour)
     window.blit(m1, (10, 550))
 
+
+def game_over(colour):
+    m1 = number_font.render("Game over!", True, colour)
+    window.blit(m1, (10, 550))
+    m2 = number_font.render("Press R to reset.", True, colour)
+    window.blit(m2, (10, 600))
 
 def invalid_board_error(colour):
     """
@@ -263,30 +282,16 @@ def start():
     # Change the next line to change board
 
     board = [
-        [4, 0, 1, 2, 9, 0, 0, 7, 5],
-        [2, 0, 0, 3, 0, 0, 8, 0, 0],
-        [0, 7, 0, 0, 8, 0, 0, 0, 6],
-        [0, 0, 0, 1, 0, 3, 0, 6, 2],
-        [1, 0, 5, 0, 0, 0, 4, 0, 3],
-        [7, 3, 0, 6, 0, 8, 0, 0, 0],
-        [6, 0, 0, 0, 2, 0, 0, 3, 0],
-        [0, 0, 7, 0, 0, 1, 0, 0, 4],
-        [8, 9, 0, 0, 6, 5, 1, 0, 7]
+        [0, 4, 9, 3, 0, 0, 0, 5, 7],
+        [5, 0, 0, 7, 6, 0, 9, 0, 0],
+        [0, 2, 7, 0, 5, 0, 6, 1, 0],
+        [0, 9, 0, 0, 1, 7, 0, 0, 2],
+        [2, 1, 8, 0, 0, 0, 0, 4, 0],
+        [0, 0, 3, 0, 2, 0, 0, 0, 6],
+        [0, 0, 0, 0, 4, 5, 3, 7, 0],
+        [0, 0, 4, 0, 9, 0, 0, 0, 1],
+        [1, 8, 0, 6, 7, 3, 0, 0, 9]
     ]
-
-    # Hardest sudoku puzzle
-    # board = [
-    #     [8, 0, 0, 0, 0, 0, 0, 0, 0],
-    #     [0, 0, 3, 6, 0, 0, 0, 0, 0],
-    #     [0, 7, 0, 0, 9, 0, 2, 0, 0],
-    #     [0, 5, 0, 0, 7, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 4, 5, 7, 0, 0],
-    #     [0, 0, 0, 1, 0, 0, 0, 3, 0],
-    #     [0, 0, 1, 0, 0, 0, 0, 6, 8],
-    #     [0, 0, 8, 5, 0, 0, 0, 1, 0],
-    #     [0, 9, 0, 0, 0, 0, 4, 0, 0]
-    #
-    # ]
 
     game = Board(board)
     buttons = {pygame.K_1: 1, pygame.K_2: 2, pygame.K_3: 3, pygame.K_4: 4, pygame.K_5: 5, pygame.K_6: 6, pygame.K_7: 7,
@@ -299,6 +304,9 @@ def start():
     val = -1
     invalid_move = False
     invalid_board = False
+    hint = False
+    hint_count = 5
+    over = False
 
     while run:
         window.fill(white)
@@ -318,9 +326,16 @@ def start():
                 solve = (e == pygame.K_SPACE)
                 delete = (e == pygame.K_d)
                 reset = (e == pygame.K_r)
+                hint = (e == pygame.K_h)
 
         r = game.selected_row
         c = game.selected_col
+
+        if hint and hint_count > 0:
+            if game.board_copy[r][c] == 0 and game.board[r][c] == 0:
+                game.update(r, c, game.solution[r][c])
+                hint_count -= 1
+            hint = False
 
         if reset:
             game.board = [[game.board_copy[i][j] for j in range(9)] for i in range(9)]
@@ -329,8 +344,10 @@ def start():
                     # game.update(i, j, game.board[i][j])
                     game.cells[i][j].setVal(game.board[i][j])
             reset = False
+            hint_count = 5
             invalid_board = False
             invalid_move = False
+            over = False
 
         if delete:
             if game.board_copy[r][c] == 0:
@@ -353,16 +370,21 @@ def start():
             else:
                 invalid_board = False
 
+        if Sudoku_noGUI.findEmptyPosition(game.board)[-1] == -1:
+            over = True
+
         game.draw()
         if sel:
             Cell.draw_lines(red, c * gap, r * gap, 4)
-        if invalid_move or invalid_board:
+        if over:
+            game_over(black)
+        elif invalid_move or invalid_board:
             if invalid_move:
                 invalid_move_error(black)
             else:
                 invalid_board_error(black)
         else:
-            instructions(black)
+            instructions(black, hint_count)
         pygame.display.update()
 
     pygame.quit()
