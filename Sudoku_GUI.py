@@ -37,7 +37,8 @@ class Board(object):
         # Column of the selected cell
         self.selected_col = -1
 
-    def draw_thicker_lines(self):
+    @staticmethod
+    def draw_thicker_lines():
         """
         Method to draw thick column and row lines
         :return: None
@@ -48,14 +49,14 @@ class Board(object):
 
     def draw(self):
         """
-        Method to draw our whole sudoku board.
+        Method to draw the whole sudoku board.
         :return: None
         """
         for i in range(9):
             for j in range(9):
                 sq = self.cells[i][j]
                 # Cells with fixed value have a colour in them to indicate that they are fixed.
-                color = mauve if (0 != self.board_copy[i][j]) else white
+                color = mauve if (self.board_copy[i][j] != 0) else white
                 sq.draw_square(color)
         self.draw_thicker_lines()
 
@@ -65,9 +66,10 @@ class Board(object):
         :param pos:
         :return: None
         """
-        if pos[0] // gap <= 8 and pos[1] // gap <= 8:
-            self.selected_col = pos[0] // gap
-            self.selected_row = pos[1] // gap
+        if pos[0] // gap > 8 or pos[1] // gap > 8:
+            return
+        self.selected_col = pos[0] // gap
+        self.selected_row = pos[1] // gap
 
     def checkIfValid(self, row, col, num):
         """
@@ -110,7 +112,7 @@ class Board(object):
         self.board[row][col] = num
         self.cells[row][col].setVal(num)
         self.draw()
-        self.cells[row][col].draw_lines(red, col * gap, row * gap, 4)
+        Cell.draw_lines(red, col * gap, row * gap, 4)
         pygame.display.update()
         pygame.time.delay(50)
 
@@ -166,7 +168,8 @@ class Cell(object):
         self.col = col
         self.val = val
 
-    def draw_lines(self, colour, x, y, thick=1):
+    @staticmethod
+    def draw_lines(colour, x, y, thick=1):
         """
         Draw four lines around a cell
         :param colour: colour of the lines
@@ -249,11 +252,11 @@ def invalid_board_error(colour):
     m1 = number_font.render("Can't be solved.", True, colour)
     window.blit(m1, (10, 550))
     m2 = text_font.render("Reset and Try Again", True, colour)
-    window.blit(m2, (10, 590))
+    window.blit(m2, (10, 600))
     m3 = text_font.render("OR", True, colour)
-    window.blit(m3, (30, 610))
+    window.blit(m3, (10, 620))
     m4 = text_font.render("Change Board.", True, black)
-    window.blit(m4, (10, 630))
+    window.blit(m4, (10, 640))
 
 
 def start():
@@ -337,7 +340,7 @@ def start():
 
         game.draw()
         if sel:
-            game.cells[r][c].draw_lines(red, c * gap, r * gap, 4)
+            Cell.draw_lines(red, c * gap, r * gap, 4)
         if invalid_move or invalid_board:
             if invalid_move:
                 invalid_move_error(black)
