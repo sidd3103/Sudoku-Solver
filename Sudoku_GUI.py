@@ -261,6 +261,7 @@ def invalid_board_error(colour):
 
 def start():
     # Change the next line to change board
+
     board = [
         [4, 0, 1, 2, 9, 0, 0, 7, 5],
         [2, 0, 0, 3, 0, 0, 8, 0, 0],
@@ -272,6 +273,20 @@ def start():
         [0, 0, 7, 0, 0, 1, 0, 0, 4],
         [8, 9, 0, 0, 6, 5, 1, 0, 7]
     ]
+
+    # Hardest sudoku puzzle
+    # board = [
+    #     [8, 0, 0, 0, 0, 0, 0, 0, 0],
+    #     [0, 0, 3, 6, 0, 0, 0, 0, 0],
+    #     [0, 7, 0, 0, 9, 0, 2, 0, 0],
+    #     [0, 5, 0, 0, 7, 0, 0, 0, 0],
+    #     [0, 0, 0, 0, 4, 5, 7, 0, 0],
+    #     [0, 0, 0, 1, 0, 0, 0, 3, 0],
+    #     [0, 0, 1, 0, 0, 0, 0, 6, 8],
+    #     [0, 0, 8, 5, 0, 0, 0, 1, 0],
+    #     [0, 9, 0, 0, 0, 0, 4, 0, 0]
+    #
+    # ]
 
     game = Board(board)
     buttons = {pygame.K_1: 1, pygame.K_2: 2, pygame.K_3: 3, pygame.K_4: 4, pygame.K_5: 5, pygame.K_6: 6, pygame.K_7: 7,
